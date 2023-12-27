@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 def simulate_dice_rolls_numpy(num_simulations):
     rng = np.random.default_rng()
 
@@ -13,22 +14,25 @@ def simulate_dice_rolls_numpy(num_simulations):
 
     return probabilities
 
+
 def display_probabilities(probabilities):
     print(" Sum    Probability ")
     print("--------------------")
     for sum_val, prob in enumerate(probabilities, start=2):
         print(f"{sum_val:^6d}    {prob:.4f}")
 
+
 def plot_probabilities(probabilities):
     sums = np.arange(2, 13)
-    
+
     plt.bar(sums, probabilities, align='center', alpha=0.7)
     plt.xlabel('Sum of Dice')
     plt.ylabel('Probability')
     plt.title('Probabilities of Sum of Two Dice Rolls')
     plt.xticks(sums)
-    
+
     plt.show()
+
 
 if __name__ == "__main__":
     num_simulations = 10000000
