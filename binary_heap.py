@@ -1,56 +1,65 @@
 import heapq
+
 import uuid
+
 import networkx as nx
 import matplotlib.pyplot as plt
 
 
-class HeapNode:
-    def __init__(self, key, index, color="skyblue"):
-        self.key = key
-        self.index = index
+class Node:
+    def __init__(self, key, color="skyblue"):
+        self.left = None
+        self.right = None
+        self.val = key
         self.color = color
         self.id = str(uuid.uuid4())
 
 
-def add_edges(graph, heap, pos, parent_index=None, layer=1):
-    if parent_index is None:
-        parent_index = 0
-
-    if parent_index < len(heap):
-        parent = heap[parent_index]
-        graph.add_node(parent.id, color=parent.color, label=parent.key)
-
-        left_child_index = 2 * parent_index + 1
-        if left_child_index < len(heap):
-            left_child = heap[left_child_index]
-            graph.add_edge(parent.id, left_child.id)
-            pos[left_child.id] = (left_child.index - 1 / (2 ** layer), -layer)
-            add_edges(graph, heap, pos, left_child_index, layer=layer + 1)
-
-        right_child_index = 2 * parent_index + 2
-        if right_child_index < len(heap):
-            right_child = heap[right_child_index]
-            graph.add_edge(parent.id, right_child.id)
-            pos[right_child.id] = (right_child.index + 1 / (2 ** layer), -layer)
-            add_edges(graph, heap, pos, right_child_index, layer=layer + 1)
+def add_edges(graph, node, pos, x=0, y=0, layer=1):
+    if node is not None:
+        graph.add_node(node.id, color=node.color, label=node.val)
+        if node.left:
+            graph.add_edge(node.id, node.left.id)
+            l = x - 1 / 2 ** layer
+            pos[node.left.id] = (l, y - 1)
+            l = add_edges(graph, node.left, pos, x=l, y=y - 1, layer=layer + 1)
+        if node.right:
+            graph.add_edge(node.id, node.right.id)
+            r = x + 1 / 2 ** layer
+            pos[node.right.id] = (r, y - 1)
+            r = add_edges(graph, node.right, pos, x=r, y=y - 1, layer=layer + 1)
+    return graph
 
 
-def draw_heap(heap):
-    heap_nodes = [HeapNode(key, index) for index, key in enumerate(heap)]
+def draw_heap(heap_list):
+    heap_root = Node(heap_list[0])
+    nodes = [heap_root]
+
+    for i in range(len(heap_list)):
+        left_child_idx = 2 * i + 1
+        right_child_idx = 2 * i + 2
+
+        if left_child_idx < len(heap_list):
+            nodes[i].left = Node(heap_list[left_child_idx])
+            nodes.append(nodes[i].left)
+        if right_child_idx < len(heap_list):
+            nodes[i].right = Node(heap_list[right_child_idx])
+            nodes.append(nodes[i].right)
+
     heap_graph = nx.DiGraph()
-    pos = {node.id: (node.index, 0) for node in heap_nodes}
-    add_edges(heap_graph, heap_nodes, pos)
+    pos = {heap_root.id: (0, 0)}
+    heap_graph = add_edges(heap_graph, heap_root, pos)
 
     colors = [node[1]['color'] for node in heap_graph.nodes(data=True)]
     labels = {node[0]: node[1]['label'] for node in heap_graph.nodes(data=True)}
 
     plt.figure(figsize=(8, 5))
-    nx.draw(heap_graph, pos=pos, labels=labels, arrows=False, node_size=1000, node_color=colors)
+    nx.draw(heap_graph, pos=pos, labels=labels, arrows=False, node_size=1500, node_color=colors)
     plt.show()
 
 
 if __name__ == "__main__":
-    heap = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+    heap = [1, 2, 3, 4, 6, 8, 10]
 
     heapq.heapify(heap)
 
