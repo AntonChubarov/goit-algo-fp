@@ -134,13 +134,22 @@ class LinkedList:
             next_node = current.next
             current.next = None
 
-            if sorted_list is None or (current.data < sorted_list.data) ^ reverse:
+            if sorted_list is None or (
+                    (
+                            current.data is not None and sorted_list.data is not None and current.data < sorted_list.data) ^ reverse
+            ):
                 current.next = sorted_list
                 sorted_list = current
             else:
                 sorted_current = sorted_list
-                while (sorted_current.next and
-                       ((sorted_current.next.data < current.data) ^ reverse)):
+                while (
+                        sorted_current.next
+                        and (
+                                (
+                                        sorted_current.next.data is not None and current.data is not None and sorted_current.next.data < current.data)
+                                ^ reverse
+                        )
+                ):
                     sorted_current = sorted_current.next
 
                 current.next = sorted_current.next
@@ -170,33 +179,38 @@ class LinkedList:
 
         return True
 
+    def clear(self):
+        self.head = None
+
     def merge(self, other):
-        if not self.is_sorted():
-            self.sort()
-        if not other.is_sorted():
-            other.sort()
+        def merge_sorted_lists(list1, list2):
+            merged_head = Node(0)
+            current = merged_head
 
-        merged_list = LinkedList()
-        node1 = self.head
-        node2 = other.head
+            while list1 is not None and list2 is not None:
+                if (list1.data is not None and list2.data is not None and list1.data < list2.data) or list2.data is None:
+                    current.next = list1
+                    list1 = list1.next
+                else:
+                    current.next = list2
+                    list2 = list2.next
 
-        while node1 is not None and node2 is not None:
-            if node1.data < node2.data:
-                merged_list.insert_at_end(node1.data)
-                node1 = node1.next
-            else:
-                merged_list.insert_at_end(node2.data)
-                node2 = node2.next
+                current = current.next
 
-        while node1 is not None:
-            merged_list.insert_at_end(node1.data)
-            node1 = node1.next
+            if list1 is not None:
+                current.next = list1
+            elif list2 is not None:
+                current.next = list2
 
-        while node2 is not None:
-            merged_list.insert_at_end(node2.data)
-            node2 = node2.next
+            return merged_head.next
 
-        self.head = merged_list.head
+        copy_self = self.__copy__()
+        copy_other = other.__copy__()
+
+        copy_self.sort()
+        copy_other.sort()
+
+        self.head = merge_sorted_lists(copy_self.head, copy_other.head)
 
     def __len__(self):
         size = 0
@@ -210,12 +224,8 @@ class LinkedList:
             return 0
 
     def __str__(self) -> str:
-        current_node = self.head
-        string = ""
-        while current_node:
-            string = string + str(current_node.data) + " "
-            current_node = current_node.next
-        return string
+        items = [str(item) for item in self]
+        return " ".join(items)
 
     def __iter__(self):
         current_node = self.head
@@ -259,17 +269,3 @@ class LinkedList:
             copy.insert_at_end(current_node.data)
             current_node = current_node.next
         return copy
-
-    def __reversed__(self):
-        self_copy = self.__copy__()
-
-        prv = None
-        current = self_copy.head
-
-        while current:
-            nxt = current.next
-            current.next = prv
-            prv = current
-            current = nxt
-
-        self_copy.head = prv
