@@ -5,6 +5,8 @@ import uuid
 import networkx as nx
 import matplotlib.pyplot as plt
 
+from helpers.rnd import random_unique_int_list
+
 
 class Node:
     def __init__(self, key, color="skyblue"):
@@ -59,7 +61,7 @@ def draw_heap(heap_list):
 
 
 if __name__ == "__main__":
-    heap = [1, 2, 3, 4, 6, 8, 10]
+    heap = random_unique_int_list(8, 12, 0, 100)
 
     heapq.heapify(heap)
 

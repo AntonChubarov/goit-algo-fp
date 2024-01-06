@@ -3,27 +3,6 @@ from linked_list import LinkedList
 
 
 class TestLinkedList(unittest.TestCase):
-    def run_sort_test_case(self, elements, expected_result):
-        lst = LinkedList()
-        for element in elements:
-            lst.insert_at_end(element)
-
-        lst.sort()
-
-        self.assertEqual(expected_result, str(lst))
-
-    def test_sort(self):
-        test_cases = [
-            ([], ''),
-            ([3, 5, -1], '-1 3 5'),
-            ([0, 0, 0], '0 0 0'),
-            ([0, None, 0], '0 0 None'),
-        ]
-
-        for elements, expected_result in test_cases:
-            with self.subTest(elements=elements, expected_result=expected_result):
-                self.run_sort_test_case(elements, expected_result)
-
     def run_reverse_test_case(self, elements, expected_result):
         lst = LinkedList()
         for element in elements:
@@ -44,6 +23,27 @@ class TestLinkedList(unittest.TestCase):
         for elements, expected_result in test_cases:
             with self.subTest(elements=elements, expected_result=expected_result):
                 self.run_reverse_test_case(elements, expected_result)
+
+    def run_sort_test_case(self, elements, expected_result):
+        lst = LinkedList()
+        for element in elements:
+            lst.insert_at_end(element)
+
+        lst.sort()
+
+        self.assertEqual(expected_result, str(lst))
+
+    def test_sort(self):
+        test_cases = [
+            ([], ''),
+            ([3, 5, -1], '-1 3 5'),
+            ([0, 0, 0], '0 0 0'),
+            ([0, None, 0], '0 0 None'),
+        ]
+
+        for elements, expected_result in test_cases:
+            with self.subTest(elements=elements, expected_result=expected_result):
+                self.run_sort_test_case(elements, expected_result)
 
     def run_merge_test_case(self, elements1, elements2, expected_result):
         lst1 = LinkedList()

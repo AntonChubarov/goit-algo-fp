@@ -70,10 +70,11 @@ def draw_graph(g, pos, title=None):
     labels = {node[0]: node[1]['label'] for node in g.nodes(data=True)}
 
     plt.figure(figsize=(8, 5))
-    nx.draw(g, pos=pos, labels=labels, arrows=False, node_size=1000, node_color=colors)
 
     if title:
         plt.title(title)
+
+    nx.draw(g, pos=pos, labels=labels, arrows=False, node_size=1000, node_color=colors)
 
     plt.show()
 
